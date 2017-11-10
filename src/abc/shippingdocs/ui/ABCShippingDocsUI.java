@@ -8,9 +8,13 @@ package abc.shippingdocs.ui;
 import abc.shippingdocs.utilities.DataManager;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -47,12 +51,14 @@ public class ABCShippingDocsUI extends javax.swing.JFrame {
         jDialog6 = new javax.swing.JDialog();
         jPopupMenu1 = new javax.swing.JPopupMenu();
         jDialog7 = new javax.swing.JDialog();
-        jPanel1 = new javax.swing.JPanel();
+        mainPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         inventorySheetPath = new javax.swing.JTextField();
         inventorySheetBrowse = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        bloodReportsDirectoryPath = new javax.swing.JTextField();
+        bloodReportsDirectoryBrowse = new javax.swing.JButton();
         uploatInventoryFileButton = new javax.swing.JButton();
-        nextButton = new javax.swing.JButton();
 
         javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
         jDialog1.getContentPane().setLayout(jDialog1Layout);
@@ -137,7 +143,7 @@ public class ABCShippingDocsUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Test"));
+        mainPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jLabel1.setText("Inventory Sheet:");
 
@@ -149,49 +155,59 @@ public class ABCShippingDocsUI extends javax.swing.JFrame {
             }
         });
 
-        uploatInventoryFileButton.setText("Upload Inventory File");
-        uploatInventoryFileButton.addActionListener(new java.awt.event.ActionListener() {
+        jLabel2.setText("Blood Reports Directory:");
+
+        bloodReportsDirectoryBrowse.setText("Browse");
+        bloodReportsDirectoryBrowse.setAutoscrolls(true);
+        bloodReportsDirectoryBrowse.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                uploatInventoryFileButtonActionPerformed(evt);
+                bloodReportsDirectoryBrowseActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
+        mainPanel.setLayout(mainPanelLayout);
+        mainPanelLayout.setHorizontalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainPanelLayout.createSequentialGroup()
                 .addGap(24, 24, 24)
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(inventorySheetPath, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(bloodReportsDirectoryPath))
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(inventorySheetPath, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(inventorySheetBrowse)
-                .addContainerGap(354, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(uploatInventoryFileButton)
-                .addGap(187, 187, 187))
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(inventorySheetBrowse)
+                    .addComponent(bloodReportsDirectoryBrowse))
+                .addContainerGap(362, Short.MAX_VALUE))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        mainPanelLayout.setVerticalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(inventorySheetPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(inventorySheetBrowse))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(uploatInventoryFileButton)
-                .addContainerGap(111, Short.MAX_VALUE))
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(bloodReportsDirectoryPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bloodReportsDirectoryBrowse))
+                .addContainerGap(366, Short.MAX_VALUE))
         );
 
         inventorySheetPath.getAccessibleContext().setAccessibleName("inventorySheetPath");
 
-        nextButton.setText("Next");
-        nextButton.addActionListener(new java.awt.event.ActionListener() {
+        uploatInventoryFileButton.setText("Upload Inventory File");
+        uploatInventoryFileButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nextButtonActionPerformed(evt);
+                uploatInventoryFileButtonActionPerformed(evt);
             }
         });
 
@@ -202,28 +218,24 @@ public class ABCShippingDocsUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(nextButton))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(uploatInventoryFileButton)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 268, Short.MAX_VALUE)
-                .addComponent(nextButton)
+                .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                .addComponent(uploatInventoryFileButton)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
-        System.exit(0);
-    }//GEN-LAST:event_nextButtonActionPerformed
 
     private void inventorySheetBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inventorySheetBrowseActionPerformed
         final JFileChooser fc = new JFileChooser();
@@ -239,16 +251,40 @@ public class ABCShippingDocsUI extends javax.swing.JFrame {
 
     private void uploatInventoryFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploatInventoryFileButtonActionPerformed
         DataManager dm = DataManager.getInstance();
-        String path = inventorySheetPath.getText();
-        if (!"".equals(path)) {
-            File file = new File(path);
+        String inventoryPath = inventorySheetPath.getText();
+        String reportsPath = bloodReportsDirectoryPath.getText();
+        if (!"".equals(inventoryPath) && !"".equals(reportsPath)) {
+            File file = new File(inventoryPath);
             try {
-                dm.loadWorkbook(file);
+                dm.loadWorkbook(file, reportsPath);
+                DefaultListModel<String> model = new DefaultListModel<>();
+                JList plantList = new JList(model);
+                ArrayList<String> plantNames = dm.getPlantNames();
+                for(String name : plantNames){
+                    model.addElement(name);
+                }
+                JScrollPane scrollPane = new JScrollPane(plantList);
+                removeAll();
+                scrollPane.setSize(300, 300);
+                add(scrollPane);
+                revalidate();
+                repaint();
             } catch (IOException ex) {
                 Logger.getLogger(ABCShippingDocsUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_uploatInventoryFileButtonActionPerformed
+
+    private void bloodReportsDirectoryBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bloodReportsDirectoryBrowseActionPerformed
+        final JFileChooser fc = new JFileChooser();
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fc.setDialogTitle("Choose Blood Reports Directory");
+        int returnVal = fc.showOpenDialog(ABCShippingDocsUI.this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            String path = fc.getSelectedFile().getPath();
+            bloodReportsDirectoryPath.setText(path);
+        }
+    }//GEN-LAST:event_bloodReportsDirectoryBrowseActionPerformed
 
     /**
      * @param args the command line arguments
@@ -286,6 +322,8 @@ public class ABCShippingDocsUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bloodReportsDirectoryBrowse;
+    private javax.swing.JTextField bloodReportsDirectoryPath;
     private javax.swing.JButton inventorySheetBrowse;
     private javax.swing.JTextField inventorySheetPath;
     private javax.swing.JDialog jDialog1;
@@ -297,11 +335,11 @@ public class ABCShippingDocsUI extends javax.swing.JFrame {
     private javax.swing.JDialog jDialog7;
     private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu5;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPopupMenu jPopupMenu1;
-    private javax.swing.JButton nextButton;
+    private javax.swing.JPanel mainPanel;
     private javax.swing.JButton uploatInventoryFileButton;
     // End of variables declaration//GEN-END:variables
 }

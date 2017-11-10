@@ -21,6 +21,13 @@ import org.apache.poi.xssf.usermodel.*;
  */
 public class Plant {
 
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
     private String name;
     private String abbrev;
     private ArrayList<DailyInventory> inventory;
@@ -28,10 +35,6 @@ public class Plant {
     private int mostRecentLotNumber;
 
     public Plant(String plantName, String plantAbbrev) {
-        System.out.println(plantName);
-        if ("Los Banos".equals(plantName)) {
-            System.out.println("here");
-        }
         name = plantName;
         inventory = new ArrayList<>();
         abbrev = plantAbbrev;
@@ -77,12 +80,13 @@ public class Plant {
                     Logger.getLogger(Plant.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 Cell beginCell = row.getCell(startColumn + 2);
-                CellValue beginCellVal = eval.evaluate(beginCell);
                 Cell endCell = row.getCell(startColumn + 4);
-                CellValue endCellVal = eval.evaluate(endCell);
-                if (beginCellVal != null && endCellVal != null) {
-                    beginLotNumber = (int) beginCellVal.getNumberValue();
-                    endLotNumber = (int) endCellVal.getNumberValue();
+//                CellValue endCellVal = eval.evaluate(endCell);
+                if (beginCell != null && endCell != null
+                        && (beginCell.getCellTypeEnum() == CellType.NUMERIC || beginCell.getCellTypeEnum() == CellType.FORMULA)
+                        && (endCell.getCellTypeEnum() == CellType.NUMERIC || endCell.getCellTypeEnum() == CellType.FORMULA)) {
+                    beginLotNumber = (int) beginCell.getNumericCellValue();
+                    endLotNumber = (int) endCell.getNumericCellValue();
                     lotCount = endLotNumber - beginLotNumber + 1;
                     if (beginLotNumber <= 0 && endLotNumber <= 0) {
                         lotCount = 0;

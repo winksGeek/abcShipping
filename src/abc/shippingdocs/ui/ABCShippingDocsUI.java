@@ -5,9 +5,19 @@
  */
 package abc.shippingdocs.ui;
 
+import abc.shippingdocs.utilities.CellStyleObject;
 import abc.shippingdocs.utilities.DataManager;
+import abc.shippingdocs.utilities.StyleUtil;
+import abc.shippingdocs.utilities.StyleUtil.Decoration;
+import com.itextpdf.html2pdf.HtmlConverter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,6 +27,10 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.IOUtils;
 
 /**
  *
@@ -59,6 +73,8 @@ public class ABCShippingDocsUI extends javax.swing.JFrame {
         bloodReportsDirectoryPath = new javax.swing.JTextField();
         bloodReportsDirectoryBrowse = new javax.swing.JButton();
         uploatInventoryFileButton = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+        masterBatchButton = new javax.swing.JButton();
 
         javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
         jDialog1.getContentPane().setLayout(jDialog1Layout);
@@ -211,6 +227,20 @@ public class ABCShippingDocsUI extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("PDF");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        masterBatchButton.setText("Master Batch");
+        masterBatchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                masterBatchButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -221,6 +251,10 @@ public class ABCShippingDocsUI extends javax.swing.JFrame {
                     .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(masterBatchButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1)
+                        .addGap(49, 49, 49)
                         .addComponent(uploatInventoryFileButton)))
                 .addContainerGap())
         );
@@ -230,7 +264,10 @@ public class ABCShippingDocsUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
-                .addComponent(uploatInventoryFileButton)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(uploatInventoryFileButton)
+                    .addComponent(jButton1)
+                    .addComponent(masterBatchButton))
                 .addContainerGap())
         );
 
@@ -260,7 +297,7 @@ public class ABCShippingDocsUI extends javax.swing.JFrame {
                 DefaultListModel<String> model = new DefaultListModel<>();
                 JList plantList = new JList(model);
                 ArrayList<String> plantNames = dm.getPlantNames();
-                for(String name : plantNames){
+                for (String name : plantNames) {
                     model.addElement(name);
                 }
                 JScrollPane scrollPane = new JScrollPane(plantList);
@@ -285,6 +322,170 @@ public class ABCShippingDocsUI extends javax.swing.JFrame {
             bloodReportsDirectoryPath.setText(path);
         }
     }//GEN-LAST:event_bloodReportsDirectoryBrowseActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        final JFileChooser fc = new JFileChooser();
+        int returnVal = fc.showOpenDialog(ABCShippingDocsUI.this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            try {
+                String path = fc.getSelectedFile().getPath();
+                String html = new String(Files.readAllBytes(Paths.get(path)));
+                HtmlConverter.convertToPdf(html, new FileOutputStream("C:\\Users\\dwink\\Documents\\PDFs\\Test.pdf"));
+                System.out.println("Done");
+            } catch (IOException ex) {
+                Logger.getLogger(ABCShippingDocsUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void masterBatchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_masterBatchButtonActionPerformed
+        Workbook masterBatch = new XSSFWorkbook();
+        Sheet sheet = masterBatch.createSheet("Sheet1");
+        addTitle(sheet, masterBatch);
+        addLabelCell(1, 0, "Sample Date:", sheet, masterBatch);
+        addLabelCell(2, 0, "Number of Liters:", sheet, masterBatch);
+        addLabelCell(1, 3, "PO:", sheet, masterBatch);
+        addLabelCell(2, 2, "Number of Lots:", sheet, masterBatch, true);
+        addLabelCell(1, 5, "Invoice No.", sheet, masterBatch, true);
+        addLabelCell(2, 5, "Part Number:", sheet, masterBatch, true);
+        addValueCell(1, 1, "", sheet, masterBatch);
+        addValueCell(2, 1, "", sheet, masterBatch);
+        addValueCell(1, 4, "", sheet, masterBatch);
+        addValueCell(2, 4, "", sheet, masterBatch);
+        addValueCell(1, 7, "", sheet, masterBatch);
+        addValueCell(2, 7, "", sheet, masterBatch);
+        addCell(4, 5, "Lot No", sheet, masterBatch, true);
+        addCell(4, 8, "Lot No", sheet, masterBatch, true);
+        addCell(4, 10, "Liters", sheet, masterBatch);
+        addCell(4, 11, "Lots", sheet, masterBatch);
+        addCell(4, 12, "Page", sheet, masterBatch, false, new CellStyleObject(new Decoration[]{}, "Calibri", (short) 11, HorizontalAlignment.RIGHT));
+        addCell(5, 3, "Sample 1", sheet, masterBatch, false, new CellStyleObject(new Decoration[]{Decoration.BOLD}, "Calibri", (short) 11, HorizontalAlignment.RIGHT));
+        addCell(16, 9, "Totals:", sheet, masterBatch, false, new CellStyleObject(new Decoration[]{Decoration.BOLD}, "Calibri", (short) 11, HorizontalAlignment.RIGHT));
+        addCell(5, 7, "Through", sheet, masterBatch);
+        addLogo(sheet, masterBatch);
+        masterBatch.setPrintArea(0, "$A$1:$O$42");
+        try {
+            FileOutputStream fileOut = new FileOutputStream("C:\\Users\\dwink\\Documents\\PDFs\\Test.xlsx");
+            masterBatch.write(fileOut);
+            fileOut.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ABCShippingDocsUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ABCShippingDocsUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
+    }//GEN-LAST:event_masterBatchButtonActionPerformed
+
+    private void addTitle(Sheet sheet, Workbook wb) {
+        Row row = sheet.createRow(0);
+        row.setHeight((short) (40 * 20));
+        CellRangeAddress range = new CellRangeAddress(0, 0, 0, 1);
+        sheet.addMergedRegion(range);
+        sheet.setColumnWidth(0, 35 * 256);
+        Cell titleCell = row.createCell(0);
+        titleCell.setCellValue("MASTER BATCH RECORD");
+        CellStyle borderStyle = wb.createCellStyle();
+        StyleUtil.addBorderToCell(borderStyle, BorderStyle.MEDIUM);
+        borderStyle.setAlignment(HorizontalAlignment.CENTER);
+        borderStyle.setFont(StyleUtil.createFont(wb, "Calibri", new Decoration[]{Decoration.BOLD}, (short) 20));
+        titleCell.setCellStyle(borderStyle);
+        row.createCell(1).setCellStyle(borderStyle);
+    }
+
+    private void addLabelCell(int rowIndex, int cellIndex, String label, Sheet sheet, Workbook wb) {
+        addLabelCell(rowIndex, cellIndex, label, sheet, wb, false);
+    }
+
+    private void addLabelCell(int rowIndex, int cellIndex, String label, Sheet sheet, Workbook wb, boolean merge) {
+        Row row = sheet.getRow(rowIndex);
+        if (row == null) {
+            row = sheet.createRow(rowIndex);
+        }
+        Cell labelCell = row.createCell(cellIndex);
+        labelCell.setCellValue(label);
+        CellStyle style = wb.createCellStyle();
+        Font font = StyleUtil.createFont(wb, "Calibri", new Decoration[]{Decoration.BOLD}, (short) 11);
+        style.setFont(font);
+        style.setAlignment(HorizontalAlignment.RIGHT);
+        labelCell.setCellStyle(style);
+        if (merge) {
+            CellRangeAddress range = new CellRangeAddress(rowIndex, rowIndex, cellIndex, cellIndex + 1);
+            sheet.addMergedRegion(range);
+        }
+    }
+
+    private void addValueCell(int rowIndex, int cellIndex, String value, Sheet sheet, Workbook wb) {
+        Row row = sheet.getRow(rowIndex);
+        if (row == null) {
+            row = sheet.createRow(rowIndex);
+        }
+        Cell labelCell = row.createCell(cellIndex);
+        labelCell.setCellValue(value);
+        CellStyle style = wb.createCellStyle();
+        Font font = StyleUtil.createFont(wb, "Calibri", new Decoration[]{}, (short) 11);
+        style.setFont(font);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        StyleUtil.addBorderToCell(style, BorderStyle.MEDIUM);
+        labelCell.setCellStyle(style);
+    }
+
+    private void addCell(int rowIndex, int cellIndex, String value, Sheet sheet, Workbook wb) {
+        addCell(rowIndex, cellIndex, value, sheet, wb, false);
+    }
+
+    private void addCell(int rowIndex, int cellIndex, String value, Sheet sheet, Workbook wb, boolean merge) {
+        addCell(rowIndex, cellIndex, value, sheet, wb, merge, new CellStyleObject(new Decoration[]{}, "Calibri", (short) 11, HorizontalAlignment.CENTER));
+    }
+
+    private void addCell(int rowIndex, int cellIndex, String value, Sheet sheet, Workbook wb, boolean merge, CellStyleObject styleOptions) {
+        Row row = sheet.getRow(rowIndex);
+        if (row == null) {
+            row = sheet.createRow(rowIndex);
+        }
+        Cell labelCell = row.createCell(cellIndex);
+        labelCell.setCellValue(value);
+        CellStyle style = wb.createCellStyle();
+        Font font = StyleUtil.createFont(wb, styleOptions.getFontName(), styleOptions.getDecorations(), styleOptions.getFontSize());
+        style.setFont(font);
+        style.setAlignment(styleOptions.getAlignment());
+        labelCell.setCellStyle(style);
+        if (merge) {
+            CellRangeAddress range = new CellRangeAddress(rowIndex, rowIndex, cellIndex, cellIndex + 1);
+            sheet.addMergedRegion(range);
+        }
+    }
+
+    private void addLogo(Sheet sheet, Workbook wb) {
+        InputStream is = null;
+        try {
+            is = new FileInputStream("C:\\Users\\dwink\\Documents\\NetBeansProjects\\ABCShippingDocs\\html\\abc_logo.png");
+            byte[] bytes = IOUtils.toByteArray(is);
+            int pictureIdx = wb.addPicture(bytes, Workbook.PICTURE_TYPE_JPEG);
+            is.close();
+            CreationHelper helper = wb.getCreationHelper();
+            Drawing drawing = sheet.createDrawingPatriarch();
+            //add a picture shape
+            ClientAnchor anchor = helper.createClientAnchor();
+            //set top-left corner of the picture,
+            //subsequent call of Picture#resize() will operate relative to it
+            anchor.setCol1(0);
+            anchor.setRow1(5);
+            Picture pict = drawing.createPicture(anchor, pictureIdx);
+            //auto-size picture relative to its top-left corner
+            pict.resize(1.4, 6.3);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ABCShippingDocsUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ABCShippingDocsUI.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                is.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ABCShippingDocsUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -326,6 +527,7 @@ public class ABCShippingDocsUI extends javax.swing.JFrame {
     private javax.swing.JTextField bloodReportsDirectoryPath;
     private javax.swing.JButton inventorySheetBrowse;
     private javax.swing.JTextField inventorySheetPath;
+    private javax.swing.JButton jButton1;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JDialog jDialog2;
     private javax.swing.JDialog jDialog3;
@@ -340,6 +542,7 @@ public class ABCShippingDocsUI extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu5;
     private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JPanel mainPanel;
+    private javax.swing.JButton masterBatchButton;
     private javax.swing.JButton uploatInventoryFileButton;
     // End of variables declaration//GEN-END:variables
 }
